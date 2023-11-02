@@ -5,7 +5,7 @@ module mux_2_1
   output [3:0] y
 );
 
-  assign y = sel ? d1 : d0;
+ // assign y = sel ? d1 : d0;
 
 endmodule
 
@@ -19,7 +19,8 @@ module mux_4_1
 );
 
   // TODO
-
+//assign y = sel[0] ? sel[1] ? d3: d2 : sel[1] d1 : d0;
+  assign y =sel[1] ? (sel[0] ? d3:d2) :(sel[0]? d1:d0) ;
   // Using code for mux_2_1 as an example,
   // write code for 4:1 mux using "?:" operator
 

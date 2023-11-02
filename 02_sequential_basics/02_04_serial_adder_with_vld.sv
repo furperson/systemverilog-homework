@@ -24,7 +24,20 @@ module serial_adder_with_vld
   // When last is high, the module should output the sum and reset its internal state.
   //
   // When rst is high, the module should reset its internal state.
+ logic car;
 
+ always_ff @ (posedge clk)
+  if (rst)
+      car <= '0;
+    else begin
+      if(~last)
+        car <= a&b | (a^b)&car; 
+      else 
+        car <= '0;
+
+      end
+
+ assign sum = (a^b & vld)^car;
 
 endmodule
 

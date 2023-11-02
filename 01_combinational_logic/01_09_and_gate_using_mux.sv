@@ -19,7 +19,7 @@ module and_gate_using_mux
 );
 
   // TODO
-
+  mux mx(.d0(0),.d1(b),.sel(a),.y(o));
   // Implement and gate using instance(s) of mux,
   // constants 0 and 1, and wire connections
 

@@ -19,7 +19,7 @@ module or_gate_using_mux
 );
 
   // TODO
-
+  mux mx(.d0(b),.d1(1),.sel(a),.y(o));
   // Implement or gate using instance(s) of mux,
   // constants 0 and 1, and wire connections
 

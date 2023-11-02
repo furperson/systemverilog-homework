@@ -57,7 +57,39 @@ module serial_comparator_most_significant_first
   // The module should also use the clk and rst inputs.
   //
   // See the testbench for the output format ($display task).
+    logic alb,agb, aeb ;
 
+   
+
+  always_ff @ (posedge clk) begin
+
+    if(rst) begin
+      
+        alb <= '0;
+        agb <= '0;
+        aeb <= '1;
+      end
+    else begin
+     
+      if ((a^b) & a & ~alb ) begin
+    
+          alb <= '0;
+          agb <= '1;
+          aeb <= '0;
+      end
+      else if ((a^b) & b & ~agb) begin
+       
+          alb <= '1;
+          agb <= '0;
+          aeb <= '0;
+        end
+
+    end
+  end
+
+   assign a_less_b = (alb | (~a&b)) & (~a_greater_b) ;
+    assign a_greater_b = (agb | (a&~b)) & (~a_less_b) ;
+    assign a_eq_b = aeb & (a ==b);
 
 endmodule
 

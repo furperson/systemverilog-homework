@@ -10,7 +10,7 @@ module posedge_detector (input clk, rst, a, output detected);
   // The a_r flip-flop input value d propogates to the output q
   // only on the next clock cycle.
 
-  always_ff @ (posedge clk)
+  always_ff @ (posedge clk)//01
     if (rst)
       a_r <= '0;
     else
@@ -31,6 +31,22 @@ module one_cycle_pulse_detector (input clk, rst, a, output detected);
   //
   // Note:
   // See the testbench for the output format ($display task).
+
+  wire  ind;
+
+  posedge_detector psd (.clk(clk), .rst(rst) , .a(a) , .detected(ind));
+
+logic rt;
+
+  always_ff @ (posedge clk)//01
+    if (rst)
+      rt <= '0;
+    else
+      rt <= ind;
+
+
+
+  assign detected = rt & ~a;
 
 
 endmodule

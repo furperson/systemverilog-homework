@@ -50,6 +50,15 @@ module serial_adder_using_logic_operations_only
   //
   // See the testbench for the output format ($display task).
 
+  logic car ;
+ always_ff @ (posedge clk)
+  if (rst)
+      car <= '0;
+    else begin
+      car <= a&b | (a^b)&car; 
+      end
+ assign sum = a^b^car;
+
 
 endmodule
 

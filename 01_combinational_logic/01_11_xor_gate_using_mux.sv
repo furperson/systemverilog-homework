@@ -19,7 +19,7 @@ module xor_gate_using_mux
 );
 
   // TODO
-
+  mux mx1(.d0(b), .d1(~b), .sel(a), .y(o));
   // Implement xor gate using instance(s) of mux,
   // constants 0 and 1, and wire connections
 
