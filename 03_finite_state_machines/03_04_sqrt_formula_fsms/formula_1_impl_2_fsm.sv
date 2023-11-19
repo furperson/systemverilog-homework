@@ -73,16 +73,18 @@ enum logic [2:0]
         st_wait_ab_res:
         begin
             isqrt_1_x=c;
-            if (isqrt_1_y_vld & isqrt_2_y_vld)
+            isqrt_2_x = '0;
+            if (isqrt_1_y_vld && isqrt_2_y_vld)
             begin
                 isqrt_1_x_vld = '1;
+                isqrt_2_x_vld = '1;
                 next_state  = st_wait_c_res;
             end
         end
 
         st_wait_c_res:
         begin
-            if (isqrt_1_y_vld)
+            if (isqrt_1_y_vld && isqrt_2_y_vld)
             begin
                 next_state = st_idle;
             end
@@ -106,16 +108,16 @@ enum logic [2:0]
         if (rst)
             res_vld <= '0;
         else
-            res_vld <= (state == st_wait_c_res & isqrt_1_y_vld);
+            res_vld <= ((state == st_wait_c_res) & isqrt_1_y_vld);
 
     always_ff @ (posedge clk)
         if (state == st_idle)
             res <= '0;
         else
-        begin if (isqrt_1_y_vld)
-            res <= res + isqrt_1_y;
-            if (isqrt_2_y_vld)
-            res <= res + isqrt_2_y;
+        begin 
+            if (isqrt_1_y_vld & isqrt_2_y_vld) begin
+            res <= res + isqrt_1_y + isqrt_2_y;
+            end
         end
 
 
