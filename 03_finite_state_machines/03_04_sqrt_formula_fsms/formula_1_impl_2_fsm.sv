@@ -36,5 +36,90 @@ module formula_1_impl_2_fsm
     //
     // Design the FSM to calculate an answer and provide the correct `res` value
 
+enum logic [2:0]
+    {
+        st_idle       = 3'd0,
+        st_wait_ab_res = 3'd1,
+        st_wait_c_res = 3'd2
+    }
+    state, next_state;
+
+    //------------------------------------------------------------------------
+    // Next state and isqrt interface
+
+    always_comb
+    begin
+        next_state  = state;
+
+        isqrt_1_x_vld = '0;
+        isqrt_1_x     = 'x;  // Don't care
+        isqrt_2_x_vld = '0;
+        isqrt_2_x     = 'x;  // Don't care
+
+        case (state)
+        st_idle:
+        begin
+            isqrt_1_x = a;
+            isqrt_2_x = b;
+
+            if (arg_vld)
+            begin
+                isqrt_1_x_vld = '1;
+                isqrt_2_x_vld = '1;
+                next_state  = st_wait_ab_res;
+            end
+        end
+
+        st_wait_ab_res:
+        begin
+            isqrt_1_x=c;
+            if (isqrt_1_y_vld & isqrt_2_y_vld)
+            begin
+                isqrt_1_x_vld = '1;
+                next_state  = st_wait_c_res;
+            end
+        end
+
+        st_wait_c_res:
+        begin
+            if (isqrt_1_y_vld)
+            begin
+                next_state = st_idle;
+            end
+        end
+        endcase
+    end
+
+    //------------------------------------------------------------------------
+    // Assigning next state
+
+    always_ff @ (posedge clk)
+        if (rst)
+            state <= st_idle;
+        else
+            state <= next_state;
+
+    //------------------------------------------------------------------------
+    // Accumulating the result
+
+    always_ff @ (posedge clk)
+        if (rst)
+            res_vld <= '0;
+        else
+            res_vld <= (state == st_wait_c_res & isqrt_1_y_vld);
+
+    always_ff @ (posedge clk)
+        if (state == st_idle)
+            res <= '0;
+        else
+        begin if (isqrt_1_y_vld)
+            res <= res + isqrt_1_y;
+            if (isqrt_2_y_vld)
+            res <= res + isqrt_2_y;
+        end
+
+
+
+
 
 endmodule
