@@ -115,7 +115,20 @@ module formula_tb
         arg_vld <= '0;
         reset ();
 
-        // Direct testing
+        // Direct testing - a single test
+
+        a       <= 1;
+        b       <= 4;
+        c       <= 9;
+        arg_vld <= '1;
+
+        @ (posedge clk);
+        arg_vld <= '0;
+
+        while (~ res_vld)
+            @ (posedge clk);
+
+        // Direct testing - a group of tests
 
         for (int i = 0; i < 100; i = i * 3 + 1)
         begin
@@ -156,8 +169,6 @@ module formula_tb
             disable fork;
 
         `endif
-
-        $display ("%s PASS", test_id);
 
     endtask
 
@@ -206,9 +217,9 @@ module formula_tb
             if (arg_vld)
             begin
                 case (formula)
-                default: assert (0);
                 1: res_expected = formula_1_fn (a, b, c);
                 2: res_expected = formula_2_fn (a, b, c);
+                default: assert (0);
                 endcase
 
                 queue.push_back (res_expected);
@@ -249,7 +260,11 @@ module formula_tb
 
     final
     begin
-        if (queue.size () != 0)
+        if (queue.size () == 0)
+        begin
+            $display ("%s PASS", test_id);
+        end
+        else
         begin
             $write ("%s FAIL: data is left sitting in the model queue:",
                 test_id);
