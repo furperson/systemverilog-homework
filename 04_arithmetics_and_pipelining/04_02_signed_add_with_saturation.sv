@@ -34,6 +34,27 @@ module signed_add_with_saturation
   // When the result does not fit into 4 bits,
   // and the arguments are negative,
   // the sum should be set to the minimum negative number.
+  logic [3:0]sum_ol;
+  wire [3:0]C;
+  genvar i;
+  generate
+  for(i=0;i<4;i=i+1)
+  begin 
+    if(i==0)
+    begin
+      assign C[i]=a[i]&b[i];
+   assign sum_ol[i]=a[i]^b[i];
+    end
+    else
+    begin
+    assign C[i]=(C[i-1]&a[i])|(C[i-1]&b[i])|(a[i]&b[i]);
+     assign sum_ol[i]=a[i]^b[i]^C[i-1];
+    end
+  end
+endgenerate
+
+assign sum= ((C[3]^C[2] )& (a[3]==b[3]))?{a[3],{3{!a[3]}}}: sum_ol;
+
 
 
 endmodule

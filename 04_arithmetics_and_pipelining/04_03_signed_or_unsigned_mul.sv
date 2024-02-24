@@ -51,7 +51,19 @@ module signed_or_unsigned_mul
   input  [    n - 1:0] a, b,
   input                signed_mul,
   output [2 * n - 1:0] res
+  
+  
 );
+always_comb begin : mul
+  if(signed_mul)
+  begin
+    
+    end
+    else begin
+    end
+
+  end
+  
 
 endmodule
 

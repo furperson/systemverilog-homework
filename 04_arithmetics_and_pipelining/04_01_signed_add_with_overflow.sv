@@ -34,7 +34,25 @@ module signed_add_with_overflow
   // when the sum (either positive or negative)
   // of two input arguments does not fit into 4 bits.
   // Otherwise the 'overflow' should be set to 0.
+  wire [3:0]C;
+  genvar i;
+  generate
+  for(i=0;i<4;i=i+1)
+  begin 
+    if(i==0)
+    begin
+      assign C[i]=a[i]&b[i];
+   assign sum[i]=a[i]^b[i];
+    end
+    else
+    begin
+    assign C[i]=(C[i-1]&a[i])|(C[i-1]&b[i])|(a[i]&b[i]);
+     assign sum[i]=a[i]^b[i]^C[i-1];
+    end
+  end
+endgenerate
 
+assign overflow = C[3]^C[2];
 
 endmodule
 
