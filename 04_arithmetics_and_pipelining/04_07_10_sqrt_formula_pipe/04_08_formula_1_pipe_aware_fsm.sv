@@ -59,6 +59,87 @@ module formula_1_pipe_aware_fsm
     // in the article by Yuri Panchul published in
     // FPGA-Systems Magazine :: FSM :: Issue ALFA (state_0)
     // You can download this issue from https://fpga-systems.ru/fsm
+	    enum logic [2:0]
+    {
+        st_idle       = 3'd0,
+		ld_b	  = 3'd1,
+		ld_c	  = 3'd2,
+		wait_a = 3'd3,
+		wait_b = 3'd4,
+        wait_c = 3'd5
+    }
+    state, next_state;
 
+    always_comb
+    begin
+        isqrt_x_vld = '0;
+        isqrt_x     = 'x;  // Don't care
+        next_state  = state;
+        case (state)
+        st_idle:
+        begin
+            if (arg_vld)
+            begin
+				isqrt_x = a;
+                isqrt_x_vld = '1;
+                next_state  = ld_b;
+            end
+        end
+		ld_b:
+		begin
+		  isqrt_x_vld = '1;
+		  isqrt_x = b;
+		  next_state = ld_c;
+		end
+		ld_c:
+		begin
+		  isqrt_x = c;
+		  isqrt_x_vld = '1;
+		  next_state = wait_a;
+		  end		  		
+        wait_a:
+        begin	
+            if (isqrt_y_vld)
+            begin
+                next_state  = wait_b;
+            end
+        end
+        wait_b:
+        begin
+            if (isqrt_y_vld)
+            begin
+                next_state  = wait_c;
+            end
+        end
+        wait_c:
+        begin
+            if (isqrt_y_vld)
+            begin
+                next_state = st_idle;
+            end
+        end
+        endcase
+    end
+
+    always_ff @ (posedge clk)
+        if (rst)
+            state <= st_idle;
+        else
+            state <= next_state;
+
+    always_ff @ (posedge clk)
+        if (rst)
+            res_vld <= '0;
+        else
+            res_vld <= (state == wait_c & isqrt_y_vld);
+
+    always_ff @ (posedge clk)
+        if (state == st_idle)
+            res <= '0;
+        else if (isqrt_y_vld)
+            res <= res + isqrt_y;
+	
+	
+	
 
 endmodule

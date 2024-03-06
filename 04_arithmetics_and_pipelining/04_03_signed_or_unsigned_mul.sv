@@ -50,21 +50,18 @@ module signed_or_unsigned_mul
 (
   input  [    n - 1:0] a, b,
   input                signed_mul,
-  output [2 * n - 1:0] res
-  
-  
+  output reg [2 * n - 1:0] res
 );
+  logic [2 * (n+1) - 1:0] myl ;
 always_comb begin : mul
   if(signed_mul)
   begin
-    
+    res = $signed(a)*$signed(b);
     end
     else begin
+    res = $unsigned(a)*$unsigned(b);
     end
-
   end
-  
-
 endmodule
 
 //----------------------------------------------------------------------------
